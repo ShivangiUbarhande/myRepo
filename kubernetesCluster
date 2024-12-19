@@ -1,0 +1,219 @@
+Kubernetes cluster
+
+ 3 ways to create clusters:
+1. Single Node cluster - MIniKube
+2. Kubeadm -> for unmanaged clusters and on prem
+3. Managed sevices - different service providers like aws, GCP, etc- costly
+
+
+Namespace --> Deployment --> Replica Set --> POD --> Node
+Pods are equivalent to containers
+POds are scheduled on Node
+2 types of Nodes - Master and Worker
+
+Kubectl command works with master Node only.
+
+Kubernetes Sevices- 3 types
+Cluster IP  - communication in between components within a cluster(ingress/egress) traffic management
+Node port  - make your component exposed to external world (dedicated range of ports)
+API Gateway - To provide a domain for externally exposing (Acts as a load balancer)
+
+
+
+kubectl get po -- show pods
+kubectl get nodes
+kubectl get no -- to get nodes
+kubectl get no -o wide  --shows IP as well
+kubectl run nginx-webapp --image nginx
+kubectl get po
+kubectl describe po nginx-webapp
+kubectl get po -o wide  -- on which node my pod is launched(always gets launched on worker nodes only)
+curl 192.34,78(IP address from abv command)----  -- will show nginx home page
+kubectl get svc -- to see services -- by default we have ClusterIP service
+kubectl expose pod nginx-webapp --type=NodePort --port=80
+kubectl get svc
+history
+kubectl get ns -- shows namespaces
+kubectl run redis-pod --image=redis
+kubectl get po
+kubectl describe po redis-pod 
+kubectl run nginx-webapp --image=nginx --dry-run=client -o yaml  -- to get yaml of a pod
+
+PODS creation:
+
+Either via commandline or via yml
+ Kubernetes is all about yml files
+
+
+container creation via yaml:
+      vi nginx-pod.yml
+      apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+      kubectl create -f nginx-pod.yml
+      kubectl get po
+      kubectl get svc
+      kubectl exec -it nginx-pod -- /bin/sh
+      paste html file here
+      kubectl expose pod nginx-pod --type=NodePort --port=80
+      kubectl get svc
+      history
+
+-------------------------------------------------------------------------------
+ReplicationController:
+
+nginx-replicademo.yml
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nginx-rc
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-app
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        ports:
+        - containerPort: 80
+  selector:
+    app: nginx-app
+
+    3  vi nginx-replicademo.yml
+    4  kubectl create -f nginx-replicademo.yml
+    5  kubectl get po
+    6  kubectl get rc
+    7  history
+    8  kubectl describe po nginx-rc-zdhvc
+    9  kubectl get po
+   10  kubectl delete po nginx-rc-bf9gb
+   11  kubectl get po
+   12  kubectl delete po --all
+   13  kubectl get po
+   kubectl scale rc nginx-rc --replicas=5   - to change replica
+
+explanation:
+yml
+create
+get rc
+describe
+ get po
+delete 1 pod
+get pod -- again 3 will 
+----------------------------------------------------------------------------
+Replica Set
+
+nginx-replicasetdemo.yml-
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-rs
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-app
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        ports:
+        - containerPort: 80
+  selector:
+    matchLabels:
+      app: nginx-app
+    matchExpressions:
+      - {key: tier, operator: In, values: [frontend]}
+
+19  vi nginx-replicasetdemo.yml
+   20  kubectl create -f nginx-replicasetdemo.yml
+   21  kubectl get rs
+   22  kubectl get po
+   23  kubectl get po -o wide
+   24  kubectl delete po nginx-rs-szz8v
+   25  kubectl get po -o wide
+   26  history
+
+---------------------------------------------------------------------------------
+Daemon-set
+Launches 1 pod in 1 node or subset of nodes
+Example to launch pod in each node
+
+fluentd-daemonsetdemo.yml-
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd-ds
+spec:
+  template:
+    metadata:
+      labels:
+        name: fluentd
+    spec:
+      containers:
+      - name: fluentd
+        image: gcr.io/google-containers/fluentd-elasticsearch:1.20
+  selector:
+    matchLabels:
+      name: fluentd
+
+vi fluentd-daemonsetdemo.yml
+   28  kubectl create -f fluentd-daemonsetdemo.yml
+   29  kubectl get ds
+   30  kubectl get po
+   31  kubectl get po -o wide
+   32  kubectl delete po fluentd-ds-q9p54
+   33  kubectl get po -o wide
+   34  history
+
+Example to launch pod in subsets of node
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nginx-ds
+spec:
+  template:
+    metadata:
+      labels:
+        name: nginx
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+      nodeSelector:
+        disktype: ssd
+  selector:
+    matchLabels:
+      name: nginx
+
+3  kubectl get nodes
+    4  kubectl get nodes --show-labels
+    5  kubectl label nodes node01 disktype=ssd  -- adding label to a node to select only that node in daemonset.
+    6  kubectl get nodes --show-labels
+    7  ls
+    8  vi fluentd-daemonsetdemo.yml
+    9  kubectl create -f fluentd-daemonsetdemo.yml
+   10  kubectl get ds
+   11  kubectl get po
+   12  kubectl get po -o wide
+   13  kubectl delete po nginx-ds-ng85m
+   14  kubectl get po -o wide
+   15  history
+
+will launch in only node01 bcause we have labeled it as disktype=ssd
+labels can be any key and value
+
