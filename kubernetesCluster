@@ -217,3 +217,183 @@ spec:
 will launch in only node01 bcause we have labeled it as disktype=ssd
 labels can be any key and value
 
+-------------------------------
+init container
+
+initcontainerdemo.yml -
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  labels:
+    app: myapp
+spec:
+  initContainers:
+  - name: init-myservice
+    image: busybox:1.28
+    command: ['sh', '-c', 'until nslookup myservice; do echo waiting for myservice; sleep 5; done;']
+  
+  containers:
+  - name: myapp-container
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+
+
+
+-----
+
+myservicedemo.yml -
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: myservice
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9376
+
+kubectl get po
+    4  vi initcontainerdemo.yml
+    5  kubectl create -f initcontainerdemo.yml
+    6  kubectl get po
+    7  kubectl describe myapp-pod
+    8  kubectl describe po myapp-pod
+    9  kubectl get po
+   10  kubectl describe po myapp-pod
+   11  vi myservicedemo.yml
+   12  kubectl create -f myservicedemo.yml
+   13  kubectl get po
+   14  kubectl describe po myapp-pod
+   15  history
+---------------------------------------------------
+Deployment 
+
+Deployment has replicaSet which has 10 containers of image redis , strategy used is recreate
+
+deploymentDemo.yml-
+
+multiple strategies:
+Recreate, Rolling update,
+
+1. Recreate
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  labels:
+    app: redis
+
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis-container
+          image: redis:5.0
+
+   16  vi deploymentDemo.yml
+   17  kubectl create -f deploymentDemo.yml
+   18  kubectl get deploy
+   19  kubectl describe deploy redis-deployment
+   20  kubectl get deploy
+   21  kubectl get rs
+   22  kubectl get po
+   23  history
+
+----------------------------
+Edit existing deployment file to change image version and validate status through --show-labels and rollout command
+
+kubectl get deploy
+   35  kubectl rollout status deployment redis-deployment
+   36  kubectl get po --show-labels
+   37  kubectl edit deploy redis-deployment
+   38  kubectl get po --show-labels
+   39  kubectl rollout status deployment redis-deployment
+   40  kubectl get po --show-labels
+   41  kubectl get po 
+   42  kubectl rollout status deployment redis-deployment
+   43  history
+
+--------------------------------------------
+2. Rolling Update(default)
+
+rollingupdateDemo.yml -
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  labels:
+    app: redis
+
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: redis
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 2
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis-container
+          image: redis:6.0
+
+   12  vi rollingupdateDemo.yml
+   13  kubectl create -f rollingupdateDemo.yml
+   15  kubectl get deploy
+   16  kubectl get rs
+   17  kubectl get po
+   18  kubectl rollout status deployment redis-deployment
+   19  kubectl get po --show-labels
+   20  kubectl edit deploy redis-deployment  -- it will directlt take inside yml , insert and change version of redis from 6.0 to 5.0
+   21  kubectl get po --show-labels
+   22  kubectl rollout status deployment redis-deployment  -- Will show how 1 by 1 rolling update is happening , pods are not terminated at once
+   25  kubectl rollout status deployment redis-deployment
+   30  kubectl set image deployment redis-deployment redis-container=redis:6.0.16 --record=true  --- Instead of making change in the yml we can change the version directly from command
+   31  kubectl rollout status deployment redis-deployment
+   32  kubectl rollout history deployment redis-deployment  -- shows how many updates have taken place on that deployment image
+   33  kubectl get deploy redis-deployment -o wide
+   34  kubectl rollout undo  deployment redis-deployment
+   35  kubectl get deploy redis-deployment -o wide
+   36  kubectl rollout history deployment redis-deployment
+   37  history
+
+--------------------------------------------------------------------------------
+Blue and Green deployment
+blue refers to older version containers and green to new version. At a time both will exists ANd once all traffic is moved to green blue will be deleted
+
+
+
+
+-----------------------------------------------------------------------------
+Canary deployment
+
+deployment region wise . New version released to only 1 region and later on to other
+
+------------------------------------------------------------------
+Ansible, Helm chart for bundling K8s pakages, Docker Desktop with MIniKube extension
+
+
+
+
+

@@ -14,3 +14,8 @@ dcbe74c3ca0e4d898a
 
 Jenkins url :
 http://ip172-18-0-64-cth4ugiim2rg00c6l56g-8081.direct.labs.play-with-docker.com/
+
+git , maven , pipeline, docker - plugins required by Jenkins
+
+Jenkins -> new Item -> pipeline 
+Configure ->general ,Add Git project url
