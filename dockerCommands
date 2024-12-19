@@ -1,0 +1,38 @@
+ 1  docker -v
+ 2  docker login   
+ 3  docker login
+ 4  docker login
+ 5  docker images  
+ 6  docker ps    
+ 7  docker ps -a  
+ 8  docker pull hello-world:latest    
+ 9  docker images   
+10  docker run hello-world
+11  docker images
+12  docker ps -a
+13  docker rmi hello-world
+14  docker rmi hello-world --force
+15  docker ps -a
+16  docker images
+17  docker pull redis
+18  docker ps
+19  docker images
+20  docker run -d --name my-redis redis
+21  docker images
+22  docker ps
+23  redis-cli
+24  docker exec -it dbb6 redis-cli
+25  docker pull nginx
+26  docker images
+27  docker run -d --name my-nginx nignx
+28  docker ps
+29  docker inspect 4403
+30  curl 172.17.0.3
+31  history
+32  docker ps
+33  docker rm my-nginx
+34  docker rm my-nginx --force
+35  docker ps
+36  docker run -d -p 3600:80 --name my-nginx nginx
+37  docker ps
+38  history
