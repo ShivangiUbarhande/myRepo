@@ -1,0 +1,82 @@
+Dat 2: Custom image creation and persistant volume creation(pvc) and attaching same volume to new container when the first goes down 
+history
+1  docker image 
+2  docker images
+3  mkdir dockerfiles
+4  cd dockerfiles/ 
+5  vi Dockerfile
+6  cat Dockerfile
+7  docker images
+8  docker build . -t my-image
+9  vi Dockerfile
+10  docker build . -t my-image
+11  docker images
+12  docker run my-image
+13  docker ps
+14  history
+15  docker volume ls
+16  docker volume create myvol
+17  docker volume ls
+18  docker pull jenkins/Jenkins
+19  docker images
+20  docker volume ls
+21  docker run --name myjenkins -v myvol:/var/jenkins_home -d -p 8081:8080 jenkins/Jenkins
+22  docker ps
+23  docker logs 2d38
+24  docker ps
+25  docker inspect 2d38
+26  docker stop  2d38
+27  docker ps
+28  docker run --name myjenkins2 -v myvol:/var/jenkins_home -d -p 8082:8080 jenkins/Jenkins
+29  docker ps
+30  docker ps
+31  docker volume ls
+32  history
+
+
+
+Docker-Compose
+
+
+docker-compose up --scale database 4
+35  docker-compose -v
+36  vi docker-compose.yml
+37  cat docker-compose.yml
+38  docker-compose config
+39  history
+40  docker images
+41  docker ps
+42  docker-compose up -d
+43  docker images
+
+----------------------------------
+<div role="listitem" tabindex="-1" aria-posinset="450" aria-setsize="485" style="height: 17px;">    1  docker-compose -v</div>
+<div role="listitem" tabindex="-1" aria-posinset="451" aria-setsize="485" style="height: 17px;">    2  docker pull openjdk:17</div>
+<div role="listitem" tabindex="-1" aria-posinset="452" aria-setsize="485" style="height: 17px;">    3  docker pull mysql:5.6</div>
+<div role="listitem" tabindex="-1" aria-posinset="453" aria-setsize="485" style="height: 17px;">    4  docker images</div>
+<div role="listitem" tabindex="-1" aria-posinset="454" aria-setsize="485" style="height: 17px;">    5  docker ps</div>
+    6  docker run --name mysql-standalone -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=test -e MYSQL_USER=sa
+<div role="listitem" tabindex="-1" aria-posinset="456" aria-setsize="485" style="height: 17px;"> -e MYSQL_PASSWORD=password -d mysql:5.6</div>
+<div role="listitem" tabindex="-1" aria-posinset="457" aria-setsize="485" style="height: 17px;">    7  docker ps</div>
+<div role="listitem" tabindex="-1" aria-posinset="458" aria-setsize="485" style="height: 17px;">    8  docker exec -it 2793 bash</div>
+<div role="listitem" tabindex="-1" aria-posinset="459" aria-setsize="485" style="height: 17px;">    9  vi Dockerfile</div>
+<div role="listitem" tabindex="-1" aria-posinset="460" aria-setsize="485" style="height: 17px;">   10  ls</div>
+<div role="listitem" tabindex="-1" aria-posinset="461" aria-setsize="485" style="height: 17px;">   11  rm Dockerfile</div>
+<div role="listitem" tabindex="-1" aria-posinset="462" aria-setsize="485" style="height: 17px;">   12  ls</div>
+<div role="listitem" tabindex="-1" aria-posinset="463" aria-setsize="485" style="height: 17px;">   13  git clone https://github.com/ShivangiUbarhande/syne-config.git</div>
+<div role="listitem" tabindex="-1" aria-posinset="464" aria-setsize="485" style="height: 17px;">   14  git clone https://github.com/ShivangiUbarhande/syne-config.git</div>
+<div role="listitem" tabindex="-1" aria-posinset="225" aria-setsize="485" style="height: 17px;">   17  git clone https://github.com/ShivangiUbarhande/Synes-Config.git</div>
+<div role="listitem" tabindex="-1" aria-posinset="227" aria-setsize="485" style="height: 17px;">   19  cd Synes-Config</div>
+<div role="listitem" tabindex="-1" aria-posinset="228" aria-setsize="485" style="height: 17px;">   20  ls</div>
+<div role="listitem" tabindex="-1" aria-posinset="229" aria-setsize="485" style="height: 17px;">   21  vi Dockerfile</div>
+<div role="listitem" tabindex="-1" aria-posinset="230" aria-setsize="485" style="height: 17px;">   22  docker build . -t users-mysql</div>
+<div role="listitem" tabindex="-1" aria-posinset="231" aria-setsize="485" style="height: 17px;">   23  docker images</div>
+   24  docker run -p 8086:8086 --name users-mysql --link mysql-standalone:mysql -d users-MySQL
+<div role="listitem" tabindex="-1" aria-posinset="233" aria-setsize="485" style="height: 17px;">   25  docker ps</div>
+<div role="listitem" tabindex="-1" aria-posinset="234" aria-setsize="485" style="height: 17px;">   26  ls</div>
+<div role="listitem" tabindex="-1" aria-posinset="235" aria-setsize="485" style="height: 17px;">   27  cat Dockerfile</div>
+<div role="listitem" tabindex="-1" aria-posinset="236" aria-setsize="485" style="height: 17px;">   28  docker login</div>
+<div role="listitem" tabindex="-1" aria-posinset="237" aria-setsize="485" style="height: 17px;">   29  docker images</div>
+<div role="listitem" tabindex="-1" aria-posinset="238" aria-setsize="485" style="height: 17px;">   30  docker tag users-mysql spu08/users-mysql:0.0.1</div>
+<div role="listitem" tabindex="-1" aria-posinset="239" aria-setsize="485" style="height: 17px;">   31  docker images</div>
+<div role="listitem" tabindex="-1" aria-posinset="240" aria-setsize="485" style="height: 17px;">   32  docker push spu08/users-mysql:0.0.1</div>
