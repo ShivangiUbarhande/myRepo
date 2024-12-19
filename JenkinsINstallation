@@ -1,0 +1,16 @@
+Jenkins Installation
+
+download Jenkins.war file
+
+
+From ubuntu
+
+CMD ["echo","Welcome to custom image"]
+
+
+dcbe74c3ca0e4d898a
+
+<div role="listitem" tabindex="-1" aria-posinset="200" aria-setsize="286" style="height: 17px;">dcbe74c3ca0e4d898a724b5000a48ce4</div>
+
+Jenkins url :
+http://ip172-18-0-64-cth4ugiim2rg00c6l56g-8081.direct.labs.play-with-docker.com/
